@@ -1,0 +1,6 @@
+# File: modulo_exemplo.py (demo)
+def extrair_dados_demo(nome_arquivo):
+    # Retorna lista de dicionários simulando extração
+    return [
+        {"Arquivo": nome_arquivo, "Nome": "Beltrano da Silva", "Curso": "Curso X", "Carga Horária": "40h", "Data": "01/01/0000"}
+    ]

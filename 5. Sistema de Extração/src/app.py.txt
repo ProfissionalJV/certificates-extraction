@@ -1,0 +1,42 @@
+# File: app.py (demo, anonymized)
+import streamlit as st
+import importlib
+import pandas as pd
+from io import BytesIO
+from PIL import Image
+
+# Simples header (sem logos institucionais)
+st.set_page_config(page_title="SECPI - Demo", layout="wide")
+
+st.title("SECPI - Demo (Extração de Certificados)")
+
+# Carregar módulo de extração demo
+CRC_MAP = {
+    "Modelo Demo A": "cod_crc.modulo_exemplo",
+    "Modelo Demo B": "cod_crc.modulo_exemplo"
+}
+
+modelo = st.selectbox("Selecione o modelo do certificado:", list(CRC_MAP.keys()))
+uploaded_files = st.file_uploader("Envie PDFs (demo)", type="pdf", accept_multiple_files=True)
+
+if st.button("Extrair (Demo)"):
+    if not uploaded_files:
+        st.warning("Envie ao menos um PDF.")
+    else:
+        try:
+            modulo = importlib.import_module(CRC_MAP[modelo])
+        except Exception as e:
+            st.error("Módulo de extração não encontrado (demo).")
+            st.stop()
+
+        registros = []
+        for f in uploaded_files:
+            # chamamento de função que retorna dados fictícios
+            dados = modulo.extrair_dados_demo(f.name)
+            registros.extend(dados)
+
+        df = pd.DataFrame(registros)
+        st.dataframe(df)
+
+        csv = df.to_csv(index=False, sep=';', encoding='utf-8-sig')
+        st.download_button("Baixar CSV (demo)", data=csv, file_name="extracao_demo.csv", mime="text/csv")
